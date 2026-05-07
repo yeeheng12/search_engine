@@ -56,8 +56,8 @@ Requires Python 3.8 or higher.
 Clone the repository:
 
 ```
-git clone https://github.com/YOUR_USERNAME/search-engine.git
-cd search-engine
+git clone https://github.com/yeeheng12/search_engine.git
+cd search_engine
 ```
 
 Install dependencies:
@@ -225,6 +225,20 @@ The entire index is stored in a single JSON file under data/index.json.
 
 ---
 
+## Complexity Analysis
+
+| Operation | Complexity | Explanation |
+|-----------|-----------|-------------|
+| Index build | O(N) | N = total tokens across all pages |
+| Single word lookup | O(1) | Dictionary hash lookup |
+| Multi-word find | O(Q x D) | Q = query terms, D = posting list size |
+| Storage | O(T + P) | T = unique terms, P = total postings |
+
+The inverted index structure was chosen specifically because single-word
+lookup is O(1) average case — significantly faster than scanning every
+document for each query.
+
+
 ## Testing
 
 Run all tests:
@@ -238,6 +252,12 @@ Run with coverage report:
 ```
 pytest tests/ --cov=src --cov-report=term-missing
 ```
+
+### Latest Test Results
+
+65 tests passed in 1.45s
+Total coverage: 89%
+Coverage threshold enforced: 85% minimum via pytest.ini
 
 ### What Each Test File Covers
 
