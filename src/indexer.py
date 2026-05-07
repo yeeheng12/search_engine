@@ -134,12 +134,13 @@ class Indexer:
     def _extract_text(self, html):
         soup = BeautifulSoup(html, 'html.parser')
 
+        # Remove noise elements
         for tag in soup(['script', 'style', 'nav', 'footer']):
             tag.decompose()
 
         parts = []
 
-        # Targeted extraction for quotes.toscrape.com
+        # Targeted extraction for quotes.toscrape.com structure
         for quote in soup.select('.text'):
             parts.append(quote.get_text())
         for author in soup.select('.author'):
@@ -149,9 +150,10 @@ class Indexer:
         if soup.title:
             parts.append(soup.title.get_text())
 
-        # Always also include full body text to capture all page content
-        body = soup.get_text(separator=' ')
-        parts.append(body)
+        # Fall back to full body text only if no targeted content found
+        # This handles author bio pages and tag pages with no quote structure
+        if not parts:
+            parts.append(soup.get_text(separator=' '))
 
         return ' '.join(parts)
 
