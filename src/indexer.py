@@ -132,45 +132,26 @@ class Indexer:
     # ------------------------------------------------------------------
 
     def _extract_text(self, html):
-        """
-        Extract meaningful text from HTML.
-        Targets quote text, authors, and tags on quotes.toscrape.com.
-        Ignores scripts, styles, and navigation boilerplate.
-
-        Args:
-            html (str): raw HTML string
-
-        Returns:
-            str: plain text content
-        """
         soup = BeautifulSoup(html, 'html.parser')
 
-        # Remove script and style elements
         for tag in soup(['script', 'style', 'nav', 'footer']):
             tag.decompose()
 
-        # Prefer targeted extraction for quotes.toscrape.com structure
         parts = []
 
-        # Quote text
+        # Targeted extraction for quotes.toscrape.com
         for quote in soup.select('.text'):
             parts.append(quote.get_text())
-
-        # Author names
         for author in soup.select('.author'):
             parts.append(author.get_text())
-
-        # Tags
         for tag in soup.select('.tag'):
             parts.append(tag.get_text())
-
-        # Page title
         if soup.title:
             parts.append(soup.title.get_text())
 
-        # Fall back to full body text if nothing targeted found
-        if not parts:
-            parts.append(soup.get_text())
+        # Always also include full body text to capture all page content
+        body = soup.get_text(separator=' ')
+        parts.append(body)
 
         return ' '.join(parts)
 
