@@ -8,6 +8,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from indexer import Indexer
+from search import Search
 
 
 # ------------------------------------------------------------------
@@ -158,3 +159,49 @@ class TestSaveLoad:
         assert "metadata" in data
         assert "documents" in data
         assert "index" in data
+
+# ------------------------------------------------------------------
+# Performance tests
+# ------------------------------------------------------------------
+
+import time
+
+class TestPerformance:
+
+    def test_build_speed_large_input(self):
+        """Index build should complete within 2 seconds for 100 pages."""
+        indexer = Indexer()
+        pages = {
+            f"http://test.com/page/{i}": f"<html><body>{'word ' * 200} unique{i}</body></html>"
+            for i in range(100)
+        }
+        start = time.time()
+        indexer.build(pages)
+        elapsed = time.time() - start
+        assert elapsed < 2.0, f"Build too slow: {elapsed:.2f}s"
+
+    def test_search_speed(self):
+        """Search across large index should complete within 0.1 seconds."""
+        indexer = Indexer()
+        pages = {
+            f"http://test.com/page/{i}": f"<html><body>good friends life love word{i}</body></html>"
+            for i in range(100)
+        }
+        indexer.build(pages)
+        searcher = Search(indexer.index, indexer.documents)
+
+        start = time.time()
+        for _ in range(100):
+            searcher.find("good friends")
+        elapsed = time.time() - start
+        assert elapsed < 1.0, f"Search too slow: {elapsed:.2f}s"
+
+    def test_tokeniser_speed(self):
+        """Tokeniser should handle large text within 0.1 seconds."""
+        indexer = Indexer()
+        large_text = "good friends life love " * 10000
+        start = time.time()
+        tokens = indexer._tokenise(large_text)
+        elapsed = time.time() - start
+        assert elapsed < 0.1
+        assert len(tokens) > 0
