@@ -267,6 +267,25 @@ pip install -r requirements.txt
 
 ---
 
+## References and Resources
+
+The following resources were used in the development of this project:
+
+- Python Requests library documentation: http://docs.python-requests.org/en/master/
+  Used for composing HTTP requests in crawler.py
+
+- Beautiful Soup library documentation: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+  Used for parsing HTML pages and extracting text in indexer.py
+
+- Target website: https://quotes.toscrape.com/
+  The website crawled and indexed by this search engine
+
+- Module lecture slides on web crawling, indexing, and search algorithms
+  COMP3011 Web Services and Web Data, University of Leeds
+  Informed the BFS crawler design, inverted index structure, and conjunctive search implementation
+
+---
+
 ## Module Information
 
 **Module:** COMP3011 Web Services and Web Data
